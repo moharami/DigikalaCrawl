@@ -3,10 +3,30 @@
 <head>
     <meta charset="utf-8">
     <title>Digikala</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
+    <style>
+        .title {
+            /*font-family: vazir;*/
+            text-align: right;
+            direction: rtl;
+            padding-right: 20px;
+            font-size: 20px;
+        }
 
-{{--    <link rel="stylesheet" type="text/css" href="{{ url('css/pdf.css') }}">--}}
+        .image {
+            max-width: 500px;
+        }
 
+        .price {
+            direction: rtl;
+            font-size: 23px;
+            /*font-family: Vazir;*/
+            padding-bottom: 18px;
+        }
+
+    </style>
 </head>
 <body>
 <div class="container mt-5 mb-5">
@@ -21,29 +41,25 @@
                 </div>
                 <hr>
                 <div class="title">
-{{--                    {{ $title }}--}}
-                    {{ $title }}
+                    {{--                    {{ $title }}--}}
+                    {{ $product->getTitle() }}
                 </div>
 
 
                 <hr>
                 <div class="text-center">
                     <img class="card-img-top mb-5 mb-md-0 image"
-                         src="{{ $image }}" alt="..."/>
+                         src="{{ $product->getImage() }}" alt="..."/>
                 </div>
                 <hr>
                 <div class="transaction mt-2 price">
                     <div class="text-center">
-                        قیمت : {{ $price }} تومان
+                        قیمت : {{ $product->getPrice() }} تومان
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
-</div>
-</div>
 </div>
 </body>
 </html>

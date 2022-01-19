@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Digikala;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -11,26 +12,24 @@ use PDF;
 
 class DigikalaController extends Controller
 {
-    public function ShowProduct($productId)
+
+    public function index(Request $request)
     {
-        $baseUrl = 'https://www.digikala.com/product/';
-        $url = $baseUrl . $productId;
-        $client = new HtmlWeb();
-        $html = $client->load($url);
-        $image = $html->find('.js-gallery-img', 0)->attr['data-src'];
-        $title = $html->find('.c-product__title', 0)->text();
-        $price = $this->convert(str_replace(',', '', $html->find('.c-product__seller-price-pure.js-price-value', 0)->text()));
+        return view('index');
+    }
 
-        $data = ['title' => $title, 'image' => $image, 'price' => $price];
-        return view('ShowProduct', compact('data'));
-
+    public function ShowProduct(Request $request)
+    {
+        $productId = $request->input('product');
+        $product = new Digikala($productId);
+        return view('ShowProduct', compact('product'));
     }
 
 
     public function PdfProduct($productId)
     {
 
-        $filePath = 'pdf/'  . $productId . '.pdf';
+        $filePath = 'pdf/' . $productId . '.pdf';
         $exist = file_exists($filePath);
         if ($exist) {
             return response()->json([
@@ -39,35 +38,12 @@ class DigikalaController extends Controller
         }
 
 
-        $baseUrl = 'https://www.digikala.com/product/';
-        $url = $baseUrl . $productId;
-        $client = new HtmlWeb();
-        $html = $client->load($url);
-        $image = $html->find('.js-gallery-img', 0)->attr['data-src'];
-        $title = $html->find('.c-product__title', 0)->text();
-        $price = $this->convert(str_replace(',', '', $html->find('.c-product__seller-price-pure.js-price-value', 0)->text()));
-
-
-        $data = ['title' => $title, 'image' => $image, 'price' => $price];
-        $pdf = PDF::loadView('pdf', $data);
-
+        $product = new Digikala($productId);
+        $pdf = PDF::loadView('PdfProduct', compact('product'));
         file_put_contents($filePath, $pdf->output());
         return response()->json([
             "pdf" => asset($filePath)
         ], 200);
 
-    }
-
-
-    function convert($string)
-    {
-        $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-        $arabic = ['٩', '٨', '٧', '٦', '٥', '٤', '٣', '٢', '١', '٠'];
-
-        $num = range(0, 9);
-        $convertedPersianNums = str_replace($persian, $num, $string);
-        $englishNumbersOnly = str_replace($arabic, $num, $convertedPersianNums);
-
-        return $englishNumbersOnly;
     }
 }
