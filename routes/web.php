@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/{productId}', [DigikalaController::class, 'ShowProduct'])->where('productId', 'dkp-\d*');
+Route::get('/pdf/{productId}', [DigikalaController::class,'PdfProduct'])->where('productId', 'dkp-\d*');
